@@ -1,0 +1,16 @@
+cat > .dockerignore <<'EOF'
+.git
+.github
+.env
+.env.*
+!.env.example
+node_modules
+.next
+dist
+coverage
+*.log
+terraform
+k8s
+helm
+docs
+EOF
