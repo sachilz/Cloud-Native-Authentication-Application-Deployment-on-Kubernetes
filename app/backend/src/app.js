@@ -42,6 +42,19 @@ app.get('/', (req, res) => {
   });
 });
 
+// Main API status endpoint
+app.get('/api', (req, res) => {
+  res.status(200).json({
+    status: 'online',
+    message: 'DevOps Authentication Backend API',
+    endpoints: {
+      health: '/api/health',
+      login: 'POST /api/login',
+      register: 'POST /api/register',
+    },
+  });
+});
+
 // API routes
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
