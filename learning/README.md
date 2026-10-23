@@ -9,3 +9,7 @@ This folder contains concept breakdowns and architecture explanations for this p
 1. **[How Frontend Connects to Backend & Database](how-frontend-connects-to-backend.md)**
    - Explains the complete flow from browser `fetch()` to Nginx reverse proxy, Node.js Express controllers, and PostgreSQL data persistence.
    - Includes architecture diagrams and relevance to the upcoming Amazon EKS migration.
+
+2. **[REST API Endpoints Guide](api-endpoints.md)**
+   - Complete documentation of all endpoints (`/api`, `/api/health`, `/api/health/live`, `/api/health/ready`, `/api/register`, `/api/login`).
+   - Includes JSON request/response formats and copy-pasteable PowerShell / curl test commands.
