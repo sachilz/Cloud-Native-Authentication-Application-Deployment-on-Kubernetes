@@ -95,3 +95,7 @@ ehthumbs.db
 # ==============================================================================
 interview-prep/
 interview prep/
+
+# Container Tarballs
+*.tar
+*.tar.gz
