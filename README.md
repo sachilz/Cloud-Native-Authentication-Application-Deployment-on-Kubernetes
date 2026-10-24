@@ -18,6 +18,9 @@ An enterprise-grade cloud migration project demonstrating the end-to-end journey
 
 ## 🏛️ System Architecture
 
+![Kubernetes Application Architecture](Kubernetes%20Authentication%20Application%20Architecture.png)
+
+
 ```text
                                  [ Global Internet / Developers ]
                                                 │
