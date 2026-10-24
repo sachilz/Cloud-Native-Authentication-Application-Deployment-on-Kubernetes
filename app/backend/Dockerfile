@@ -1,18 +1,13 @@
-
 FROM node:20-alpine
 
-ENV NODE_ENV=production
 WORKDIR /app
 
-# Install production dependencies
+# Install dependencies
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
-# Copy application source
-COPY --chown=node:node . .
-
-# Run as non-root
-USER node
+# Copy backend source code
+COPY . .
 
 EXPOSE 5000
 
