@@ -65,7 +65,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: devops-task-tracker-backend
+  name: backend
 spec:
   selector:
     app: devops-task-tracker-backend

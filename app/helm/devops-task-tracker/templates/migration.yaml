@@ -1,0 +1,61 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "devops-task-tracker.fullname" . }}-migration
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        app: {{ include "devops-task-tracker.fullname" . }}-migration
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migration
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for PostgreSQL..."
+              until node -e '
+                const net = require("net");
+                const s = net.connect(
+                  Number(process.env.DB_PORT),
+                  process.env.DB_HOST
+                );
+                s.on("connect", () => { s.end(); process.exit(0); });
+                s.on("error", () => process.exit(1));
+                s.setTimeout(2000, () => {
+                  s.destroy();
+                  process.exit(1);
+                });
+              '; do
+                sleep 3
+              done
+
+              echo "PostgreSQL is reachable. Running migrations..."
+              npm run migrate
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: DB_HOST
+              value: {{ .Values.backend.config.DB_HOST | quote }}
+            - name: DB_PORT
+              value: {{ .Values.backend.config.DB_PORT | quote }}
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "devops-task-tracker.fullname" . }}-postgres-secret
+                  key: POSTGRES_DB
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "devops-task-tracker.fullname" . }}-postgres-secret
+                  key: POSTGRES_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "devops-task-tracker.fullname" . }}-postgres-secret
+                  key: POSTGRES_PASSWORD
