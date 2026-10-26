@@ -1,4 +1,4 @@
-﻿# Containerized-Identity-Service
+﻿# Cloud Native Authentication Application Deployment on Kubernetes
 
 ### 🚀 Production-Ready Microservices Migration from Docker Compose to Amazon Elastic Kubernetes Service (EKS)
 
