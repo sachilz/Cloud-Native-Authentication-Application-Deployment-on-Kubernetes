@@ -17,6 +17,8 @@ An end-to-end cloud-native project demonstrating the containerization, orchestra
 
 ## 🏛️ System Architecture
 
+![Cloud-Native Kubernetes Authentication Architecture](Cloud-Native%20Kubernetes%20Authentication%20Architecture.png)
+
 ```text
 [ Browser / Developer Client ]
              │
@@ -84,6 +86,7 @@ An end-to-end cloud-native project demonstrating the containerization, orchestra
 Cloud-Native-Authentication-Application-Deployment-on-Kubernetes/
 ├── .dockerignore                       # Excludes local files from Docker build context
 ├── .gitignore                          # Excludes secrets, node_modules, and build outputs
+├── Cloud-Native Kubernetes Authentication Architecture.png # Visual system architecture diagram
 ├── README.md                           # Master project documentation
 │
 ├── app/                                # Application Source Code & Deployment Configs
