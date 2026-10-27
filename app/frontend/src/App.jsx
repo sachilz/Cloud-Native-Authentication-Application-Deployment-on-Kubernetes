@@ -166,7 +166,7 @@ export default function App() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-xs uppercase text-slate-500 font-semibold">Cluster Role</span>
-              <span className="font-mono text-xs text-cyan-400">eks:authorized-member</span>
+              <span className="font-mono text-xs text-cyan-400">k8s:authorized-member</span>
             </div>
           </div>
 
@@ -185,7 +185,7 @@ export default function App() {
 
         {/* Footer */}
         <div className="absolute bottom-4 text-center text-xs text-slate-600">
-          Kubernetes Migration & Deployment to Amazon EKS &bull; Auth Service
+          Cloud-Native Authentication Application &bull; Minikube Deployment
         </div>
       </div>
     );

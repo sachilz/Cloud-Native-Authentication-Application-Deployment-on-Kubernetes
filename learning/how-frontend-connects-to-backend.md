@@ -169,13 +169,13 @@ When React sees `currentUser` is not null, it hides the login form and renders:
 
 ---
 
-## 7. Why This Architecture Matters for DevOps & EKS
+## 7. Why This Architecture Matters for Kubernetes & Minikube
 
-This 3-tier architecture (**Frontend -> Reverse Proxy -> Backend -> Database**) is the exact standard used in Kubernetes:
+This 3-tier architecture (**Frontend -> Reverse Proxy -> Backend -> Database**) is the exact cloud-native standard used in Kubernetes:
 
-| Component | Local Docker Compose | Amazon EKS Deployment |
+| Component | Local Docker Compose | Minikube Kubernetes Deployment |
 |---|---|---|
-| **Frontend** | `devops-frontend` container | Kubernetes Deployment + Nginx Ingress |
+| **Frontend** | `devops-frontend` container | Kubernetes Deployment + NodePort / Ingress |
 | **Backend** | `devops-backend` container | Kubernetes Deployment + ClusterIP Service |
-| **Database** | `devops-postgres` container | **Amazon RDS PostgreSQL** |
-| **Routing** | Nginx `proxy_pass` | AWS ALB (Application Load Balancer) |
+| **Database** | `devops-postgres` container | Stateful PostgreSQL Deployment + PVC |
+| **Routing** | Nginx `proxy_pass` | Service Discovery (`backend:5000`) |

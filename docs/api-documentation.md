@@ -1,6 +1,6 @@
 # REST API Documentation
 
-This document describes all REST API endpoints for the DevOps Authentication Service supporting the **Kubernetes Migration & Deployment to Amazon EKS** project.
+This document describes all REST API endpoints for the DevOps Authentication Service supporting the **Cloud-Native Kubernetes (Minikube)** deployment.
 
 ## Base URLs
 - **Via Frontend Nginx Proxy**: `http://localhost:3000/api` or `http://localhost/api`

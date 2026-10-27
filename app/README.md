@@ -1,6 +1,6 @@
 # DevOps Task Tracker Application
 
-A modern, responsive, full-stack **DevOps Task Tracker** designed to organize and track engineering workflows for the **Kubernetes Migration & Deployment to Amazon EKS** project.
+A modern, responsive, full-stack **DevOps Task Tracker** designed to organize and track engineering workflows for the **Cloud-Native Kubernetes (Minikube)** deployment project.
 
 ---
 

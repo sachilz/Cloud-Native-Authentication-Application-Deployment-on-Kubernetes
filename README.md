@@ -1,10 +1,9 @@
-﻿# Cloud Native Authentication Application Deployment on Kubernetes
+# Cloud-Native Authentication Application Deployment on Kubernetes (Minikube)
 
-### 🚀 Production-Ready Microservices Migration from Docker Compose to Amazon Elastic Kubernetes Service (EKS)
+### 🚀 Microservices Containerization & Orchestration from Docker Compose to Minikube Kubernetes
 
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-1.30+-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
-[![AWS EKS](https://img.shields.io/badge/AWS-EKS%20%7C%20ECR-FF9900?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/eks/)
-[![Terraform](https://img.shields.io/badge/Terraform-1.5+-7B42BC?logo=terraform&logoColor=white)](https://www.terraform.io/)
+[![Minikube](https://img.shields.io/badge/Minikube-Local_Cluster-13B5EA?logo=kubernetes&logoColor=white)](https://minikube.sigs.k8s.io/)
 [![Helm](https://img.shields.io/badge/Helm-3.x-0F1689?logo=helm&logoColor=white)](https://helm.sh/)
 [![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![Node.js](https://img.shields.io/badge/Node.js-20_LTS-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
@@ -12,13 +11,55 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16_Alpine-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-An enterprise-grade cloud migration project demonstrating the end-to-end journey of containerizing, orchestrating, and migrating a full-stack multi-tier application (**DevOps Task Tracker**) from a legacy local **Docker Compose** environment to a secure, resilient, and auto-scaled **Amazon EKS** cloud architecture using **Terraform Infrastructure as Code (IaC)** and **Helm 3**.
+An end-to-end cloud-native project demonstrating the containerization, orchestration, and deployment of a full-stack multi-tier application (**DevOps Task Tracker & Authentication Application**) from a local **Docker Compose** environment to a local **Minikube Kubernetes** cluster using declarative **Kubernetes Manifests** and **Helm 3**.
 
 ---
 
 ## 🏛️ System Architecture
 
-![Kubernetes Application Architecture](Kubernetes%20Authentication%20Application%20Architecture.png)
+```text
+[ Browser / Developer Client ]
+             │
+             │ (Port 3000 or NodePort)
+             ▼
+┌────────────────────────────────────────────────────────┐
+│ Minikube Kubernetes Cluster (Namespace: devops-tracker)│
+│                                                        │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Frontend Service (NodePort / Port-Forward 3000)  │  │
+│  └──────────────────────┬───────────────────────────┘  │
+│                         │                              │
+│                         ▼                              │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Frontend Pod (Nginx + React 18 SPA)              │  │
+│  │ Reverse Proxies /api/* ───────────────┐          │  │
+│  └───────────────────────────────────────┼──────────┘  │
+│                                          │             │
+│                                          ▼             │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Backend Service (ClusterIP: backend:5000)        │  │
+│  └──────────────────────┬───────────────────────────┘  │
+│                         │                              │
+│                         ▼                              │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Backend Pod (Node.js 20 + Express REST API)      │  │
+│  │ Config: ConfigMap (backend-config)               │  │
+│  │ Credentials: Secret (db-credentials)             │  │
+│  │ Health Probes: /health/live, /health/ready       │  │
+│  └──────────────────────┬───────────────────────────┘  │
+│                         │                              │
+│                         ▼                              │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Database Service (ClusterIP: postgres:5432)      │  │
+│  └──────────────────────┬───────────────────────────┘  │
+│                         │                              │
+│                         ▼                              │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ PostgreSQL 16 Stateful Pod                       │  │
+│  │ Storage: PersistentVolumeClaim (PVC 1Gi)         │  │
+│  └──────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -26,29 +67,29 @@ An enterprise-grade cloud migration project demonstrating the end-to-end journey
 
 | Domain | Technology | Purpose & Implementation |
 |---|---|---|
-| **Cloud Provider** | **AWS (us-east-1)** | VPC, Public/Private Subnets, NAT Gateways, IAM OIDC, ECR, and Amazon EKS. |
-| **Container Orchestration** | **Amazon EKS & Minikube** | Multi-node cluster management, self-healing deployments, and service discovery. |
-| **Infrastructure as Code** | **Terraform** | Declarative cloud resource provisioning (VPC, Security Groups, IAM, and EKS managed node groups). |
-| **Package Management** | **Helm 3** | Reusable templated packaging (`app/helm/devops-task-tracker`) with environment-specific overrides. |
-| **Container Engine** | **Docker & Buildx** | Multi-stage, minimal Alpine base images with non-root security context (`USER node`). |
-| **Container Registry** | **Amazon ECR** | Secure, private container registry for distribution to AWS EKS worker nodes. |
-| **Application Layer** | **Node.js, Express, React, Vite** | Modern full-stack REST application with JWT authentication, Kanban dashboard, and health probes. |
-| **Database & Storage** | **PostgreSQL 16 & AWS EBS CSI** | Persistent stateful workload backed by Kubernetes PVCs and automated migration jobs. |
-| **Observability** | **Kubernetes Probes & Prometheus** | Startup, liveness, and readiness probes (`/api/health/live`, `/api/health/ready`). |
+| **Container Orchestration** | **Minikube** | Local Kubernetes cluster managing Pods, Deployments, Services, and PVCs. |
+| **Package Management** | **Helm 3** | Reusable templated packaging (`app/helm/devops-task-tracker`) with environment overrides. |
+| **Declarative Manifests** | **Kubernetes YAML** | Pure Kubernetes manifests (`app/k8s/`) specifying Deployments, Services, ConfigMaps, and Secrets. |
+| **Container Engine** | **Docker & Buildx** | Multi-stage minimal Alpine base images with non-root security context (`USER node`). |
+| **Frontend Tier** | **React 18, Vite, Tailwind CSS** | Single-page application with Kanban board, authentication UI, and Nginx reverse proxy. |
+| **Backend Tier** | **Node.js 20, Express** | RESTful API with user authentication, health probes (`/api/health/live`, `/api/health/ready`), and task management. |
+| **Database & Storage** | **PostgreSQL 16 Alpine & PVC** | Stateful relational database backed by a Kubernetes PersistentVolumeClaim (PVC). |
+| **Observability** | **Kubernetes Probes** | Startup, liveness, and readiness probes for zero-downtime and self-healing. |
 
 ---
 
 ## 📂 Repository Directory Structure
 
 ```text
-Kubernetes-Migration-Deployment-to-Amazon-EKS/
-├── .gitignore                          # Excludes secrets, node_modules, and container tarballs
+Cloud-Native-Authentication-Application-Deployment-on-Kubernetes/
+├── .dockerignore                       # Excludes local files from Docker build context
+├── .gitignore                          # Excludes secrets, node_modules, and build outputs
 ├── README.md                           # Master project documentation
 │
-├── app/                                # DevOps Task Tracker Application Stack
+├── app/                                # Application Source Code & Deployment Configs
 │   ├── backend/                        # Node.js + Express REST API
 │   │   ├── src/                        # Controllers, routes, models, and DB migrations
-│   │   ├── Dockerfile                  # Production Alpine container with non-root user
+│   │   ├── Dockerfile                  # Multi-stage Alpine container with non-root user
 │   │   ├── .env.example                # Sample backend environment configuration
 │   │   └── package.json                # Dependencies and Jest testing scripts
 │   │
@@ -61,7 +102,7 @@ Kubernetes-Migration-Deployment-to-Amazon-EKS/
 │   ├── k8s/                            # Pure Kubernetes Manifests (Declarative YAML)
 │   │   ├── backend.yaml                # Backend Deployment & ClusterIP Service
 │   │   ├── backend-configmap.yaml      # Non-sensitive backend environment variables
-│   │   ├── frontend.yaml               # Frontend Deployment & Service
+│   │   ├── frontend.yaml               # Frontend Deployment & NodePort Service
 │   │   ├── postgres.yaml               # PostgreSQL Deployment, Secret, PVC, and Service
 │   │   └── db-migration-job.yaml       # One-shot database schema migration Job
 │   │
@@ -71,28 +112,28 @@ Kubernetes-Migration-Deployment-to-Amazon-EKS/
 │   │       ├── values.yaml             # Configurable values (images, replicas, ports, storage)
 │   │       └── templates/              # Kubernetes resource templates
 │   │
-│   ├── docker-compose.yml              # Legacy local multi-container development environment
+│   ├── docker-compose.yml              # Local multi-container development environment
 │   └── .env.example                    # Global environment template for Docker Compose
-│
-├── terraform/                          # Infrastructure as Code (AWS Cloud Provisioning)
-│   ├── main.tf                         # Master Terraform configuration
-│   ├── providers.tf                    # AWS and Kubernetes provider definitions
-│   ├── variables.tf                    # VPC CIDRs, cluster names, and node sizing
-│   ├── outputs.tf                      # EKS cluster endpoint, OIDC ARN, and kubeconfig string
-│   └── modules/                        # Reusable VPC, IAM, and EKS cluster modules
 │
 ├── docs/                               # Architecture Specifications & API Reference
 │   ├── api-documentation.md            # Complete REST API documentation with endpoints
-│   ├── architecture.md                 # Deep-dive architectural decisions
-│   └── migration-guide.md              # Docker Compose to EKS migration strategy
+│   ├── architecture.md                 # System architectural design decisions
+│   └── troubleshooting.md              # Troubleshooting guide
 │
-└── learning/                           # Comprehensive Step-by-Step Practical Guides
-    ├── 01-deploy-postgres-container-in-minikube.md  # Step 1: Stateful DB deployment in K8s
-    ├── 02-deploy-frontend-container-in-minikube.md  # Step 2: Nginx + React deployment in K8s
-    ├── 03-deploy-backend-container-in-minikube.md   # Step 3: Express API deployment in K8s
-    ├── 04-push-images-to-amazon-ecr.md              # Step 4: Tagging and pushing images to AWS ECR
+├── issues/                             # Incident Post-Mortems & Resolutions
+│   ├── 01-npm-ci-lockfile-mismatch.md  # Docker build lockfile mismatch fix
+│   ├── 02-port-5000-conflict.md        # Host port collision resolution
+│   └── README.md                       # Issues log and key takeaways
+│
+└── learning/                           # Step-by-Step Practical Minikube Guides
+    ├── 01-deploy-postgres-container-in-minikube.md  # Step 1: Stateful DB deployment
+    ├── 02-deploy-frontend-container-in-minikube.md  # Step 2: Nginx + React deployment
+    ├── 03-deploy-backend-container-in-minikube.md   # Step 3: Express API deployment
+    ├── backend-minikube-deployment.md               # Backend in-depth deployment reference
     ├── kubectl-pods-and-services-inspection.md      # Pod lifecycle, services, and debugging
     ├── kubectl-port-forward-guide.md                # Port forwarding and local tunneling
+    ├── how-frontend-connects-to-backend.md          # End-to-end request lifecycle
+    ├── docker-compose-service-inspection.md         # Validating compose configurations
     └── environment-variables-reference.md           # Consolidated reference of all env configs
 ```
 
@@ -100,81 +141,83 @@ Kubernetes-Migration-Deployment-to-Amazon-EKS/
 
 ## 🚀 Execution & Deployment Guide
 
-### Phase 1: Local Verification with Docker Compose (Legacy Baseline)
-Run the full-stack application locally before migration:
+### Phase 1: Local Verification with Docker Compose (Baseline)
+Run the full-stack application locally with Docker Compose to verify application behavior before deploying to Kubernetes:
 
 ```bash
 cd app
 cp .env.example .env
 docker compose up -d
 ```
-* **Frontend:** `http://localhost:3000`
-* **Backend API:** `http://localhost:5001/api/health`
+* **Frontend UI:** `http://localhost:3000`
+* **Backend Health Check:** `http://localhost:5001/api/health`
 * **Shutdown:** `docker compose down`
 
 ---
 
-### Phase 2: Local Kubernetes Testing (Minikube / Kind)
+### Phase 2: Start Minikube & Load Container Images
 
-1. **Start your local cluster:**
+1. **Start Minikube:**
    ```bash
    minikube start --driver=docker
    ```
 
-2. **Build and load local images into the cluster:**
+2. **Build Local Docker Images:**
    ```bash
    docker build -t app-backend:latest app/backend
    docker build -t app-frontend:latest app/frontend
+   ```
 
+3. **Load Images into Minikube's Docker Cache:**
+   ```bash
    minikube image load app-backend:latest
    minikube image load app-frontend:latest
    ```
 
-3. **Deploy manifests:**
+4. **Verify Images in Minikube:**
    ```bash
-   kubectl apply -f app/k8s/postgres.yaml
-   kubectl apply -f app/k8s/backend-configmap.yaml
-   kubectl apply -f app/k8s/backend.yaml
-   kubectl apply -f app/k8s/frontend.yaml
+   minikube image ls | grep app-
    ```
 
-4. **Verify rollout health:**
+---
+
+### Phase 3: Deploy via Declarative Kubernetes Manifests
+
+1. **Create the Application Namespace:**
    ```bash
+   kubectl create namespace devops-tracker
+   ```
+
+2. **Deploy PostgreSQL (Secret, PVC, Deployment, Service):**
+   ```bash
+   kubectl apply -f app/k8s/postgres.yaml -n devops-tracker
+   kubectl rollout status deployment/postgres -n devops-tracker --timeout=120s
+   ```
+
+3. **Deploy Backend ConfigMap & Deployment:**
+   ```bash
+   kubectl apply -f app/k8s/backend-configmap.yaml -n devops-tracker
+   kubectl apply -f app/k8s/backend.yaml -n devops-tracker
    kubectl rollout status deployment/backend -n devops-tracker --timeout=180s
+   ```
+
+4. **Run Database Migration Job:**
+   ```bash
+   kubectl apply -f app/k8s/db-migration-job.yaml -n devops-tracker
+   kubectl wait --for=condition=complete job/db-migration -n devops-tracker --timeout=60s
+   ```
+
+5. **Deploy Frontend (Deployment & NodePort Service):**
+   ```bash
+   kubectl apply -f app/k8s/frontend.yaml -n devops-tracker
    kubectl rollout status deployment/frontend -n devops-tracker --timeout=180s
    ```
 
-5. **Access the application locally:**
-   ```bash
-   kubectl port-forward -n devops-tracker service/frontend 3000:80
-   ```
-   Navigate to `http://localhost:3000` in your browser.
-
 ---
 
-### Phase 3: Push Images to Amazon ECR
+### Phase 4: Deploy Using Helm 3 (Alternative)
 
-Authenticate your local Docker engine with Amazon ECR and publish the images:
-
-```bash
-# 1. Login to ECR
-aws ecr get-login-password --region us-east-1 --profile eks-devops | \
-  docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com
-
-# 2. Tag images
-docker tag app-backend:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/devops-tracker-backend:latest
-docker tag app-frontend:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/devops-tracker-frontend:latest
-
-# 3. Push to ECR
-docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/devops-tracker-backend:latest
-docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/devops-tracker-frontend:latest
-```
-
----
-
-### Phase 4: Deploy Using Helm 3
-
-Deploy the entire microservice ecosystem using the packaged Helm chart:
+Instead of applying individual manifests, you can deploy the complete stack using the packaged Helm chart:
 
 ```bash
 cd app/helm/devops-task-tracker
@@ -182,44 +225,65 @@ cd app/helm/devops-task-tracker
 # 1. Lint the Helm chart templates
 helm lint .
 
-# 2. Dry-run template generation
-helm install devops-task-tracker . --dry-run --debug
-
-# 3. Deploy to your Kubernetes cluster
+# 2. Deploy to Minikube
 helm install devops-task-tracker . \
   --namespace devops-tracker \
   --create-namespace \
-  --set postgres.auth.password="supersecretpassword"
+  --set postgres.auth.password="postgres"
+```
+
+To uninstall:
+```bash
+helm uninstall devops-task-tracker -n devops-tracker
 ```
 
 ---
 
-### Phase 5: Cloud Infrastructure with Terraform (Amazon EKS)
+### Phase 5: Access the Application
 
-Provision the production cloud infrastructure on AWS:
+Choose either of the two methods below to access the frontend from your browser:
 
+#### Method A: Port Forwarding (Recommended for Local Dev)
 ```bash
-cd terraform
-terraform init
-terraform plan -out=tfplan
-terraform apply tfplan
+kubectl port-forward -n devops-tracker service/frontend 3000:80
 ```
+Open **`http://localhost:3000`** in your browser.
 
-Update your local kubeconfig to authenticate with the new AWS EKS cluster:
+#### Method B: Minikube Service URL (NodePort)
 ```bash
-aws eks update-kubeconfig --region us-east-1 --name devops-tracker-eks
-kubectl get nodes
+minikube service frontend -n devops-tracker
+```
+This automatically retrieves the NodePort URL and opens your browser.
+
+---
+
+### Phase 6: Inspection & Debugging Commands
+
+```bash
+# View all running resources in the namespace
+kubectl get all,pvc,configmaps,secrets -n devops-tracker
+
+# Check Pod health and probes
+kubectl describe pod -l app=backend -n devops-tracker
+
+# View backend logs
+kubectl logs -l app=backend -n devops-tracker -f
+
+# View frontend reverse proxy logs
+kubectl logs -l app=frontend -n devops-tracker -f
+
+# Check database tables
+kubectl exec -it deployment/postgres -n devops-tracker -- psql -U postgres -d devops_tasks -c "\dt"
 ```
 
 ---
 
-## 🔒 Security & Production Hardening
+## 🔒 Security & Container Hardening
 
 * **Non-Root Execution:** All application containers drop root privileges (`USER node`, UID 1000) and enforce `runAsNonRoot: true`.
-* **Privilege Escalation:** Containers strictly set `allowPrivilegeEscalation: false` and drop all Linux capabilities (`capabilities.drop: ["ALL"]`).
-* **Secret Isolation:** Database passwords and sensitive tokens are injected exclusively via Kubernetes Secrets (`secretKeyRef`) or AWS Secrets Manager.
-* **Network Policies & Segmentation:** Microservices communicate over private `ClusterIP` networks; database port `5432` is never exposed externally.
-* **Storage Encryption:** Persistent volumes in AWS are backed by EBS volumes encrypted at rest with AWS KMS.
+* **Privilege Restriction:** Containers set `allowPrivilegeEscalation: false` and drop all Linux capabilities (`capabilities.drop: ["ALL"]`).
+* **Secret Isolation:** Database passwords and sensitive tokens are injected exclusively via Kubernetes Secrets (`secretKeyRef`).
+* **Network Isolation:** PostgreSQL is exposed only via a private `ClusterIP` on port `5432`; it is not accessible from outside the cluster.
 
 ---
 
@@ -232,9 +296,10 @@ Comprehensive step-by-step documentation created throughout this project:
 | [**01 - PostgreSQL in Minikube**](learning/01-deploy-postgres-container-in-minikube.md) | PVC creation, SQL init configmaps, and stateful database verification. |
 | [**02 - Frontend in Minikube**](learning/02-deploy-frontend-container-in-minikube.md) | React image loading, Nginx reverse proxy routing, and NodePort access. |
 | [**03 - Backend in Minikube**](learning/03-deploy-backend-container-in-minikube.md) | Probes, database connectivity, and non-root runtime verification. |
-| [**04 - Pushing Images to ECR**](learning/04-push-images-to-amazon-ecr.md) | ECR authentication, repository tagging, and image publishing. |
+| [**Backend Minikube Reference**](learning/backend-minikube-deployment.md) | Deep-dive guide for deploying and troubleshooting backend services in Minikube. |
+| [**How Frontend Connects to Backend**](learning/how-frontend-connects-to-backend.md) | Detailed walkthrough of the reverse proxy and API communication flow. |
 | [**Kubectl Inspection Commands**](learning/kubectl-pods-and-services-inspection.md) | Pod states, rollout monitoring, and 3-in-1 snapshot debugging. |
-| [**Kubectl Port-Forwarding Guide**](learning/kubectl-port-forward-guide.md) | Secure local tunneling to private Kubernetes ClusterIP services. |
+| [**Kubectl Port-Forwarding Guide**](learning/kubectl-port-forward-guide.md) | Secure local tunneling to private Kubernetes services. |
 | [**Environment Variables Reference**](learning/environment-variables-reference.md) | Complete reference of all `.env`, ConfigMap, and Secret values. |
 | [**REST API Documentation**](docs/api-documentation.md) | Complete endpoints, request/response payloads, and authentication headers. |
 

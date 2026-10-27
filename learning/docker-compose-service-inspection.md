@@ -1,4 +1,4 @@
-﻿# Docker Compose Service Inspection — `config --format json` + Python Parser
+# Docker Compose Service Inspection — `config --format json` + Python Parser
 
 ## Purpose
 
@@ -38,7 +38,7 @@ for name, s in d["services"].items():
 
 ---
 
-## Output (Kubernetes-Migration-Deployment-to-Amazon-EKS)
+## Output (Cloud-Native-Authentication-Application-Deployment-on-Kubernetes)
 
 ```
 --- backend ---
@@ -115,4 +115,4 @@ docker compose -f app/docker-compose.yml config --quiet
 
 ---
 
-*Recorded: 2026-10-23 | Project: Kubernetes-Migration-Deployment-to-Amazon-EKS*
+*Recorded: 2026-10-23 | Project: Cloud-Native-Authentication-Application-Deployment-on-Kubernetes*

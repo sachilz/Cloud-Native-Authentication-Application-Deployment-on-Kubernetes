@@ -1,4 +1,4 @@
-﻿# Understanding `kubectl port-forward`
+# Understanding `kubectl port-forward`
 
 ## Overview
 
@@ -43,7 +43,7 @@ kubectl port-forward  -n devops-tracker  service/backend  5001:5000
    (Secure Tunnel via Kube-API Server)
         │
         ▼
-[ Minikube / EKS Cluster ]
+[ Minikube Kubernetes Cluster ]
         │
         ▼
 [ Kubernetes Service: backend (Port 5000) ]

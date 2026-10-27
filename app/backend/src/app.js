@@ -35,7 +35,7 @@ app.use('/health', healthRoutes);
 app.get('/', (req, res) => {
   res.status(200).json({
     name: 'DevOps Authentication Service',
-    description: 'Kubernetes Migration to Amazon EKS User Authentication API',
+    description: 'Cloud-Native User Authentication API on Minikube',
     status: 'online',
     version: '1.0.0',
     documentation: '/api/health',

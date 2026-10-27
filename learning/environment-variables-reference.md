@@ -1,8 +1,8 @@
-﻿# Environment Variables & Configuration Reference
+# Environment Variables & Configuration Reference
 
 ## Overview
 
-This document provides a single, consolidated reference of all `.env` files and environment variable values used across the **DevOps Task Tracker** project, including their usage in **Local Development**, **Docker Compose**, **Minikube/Kind**, and **Amazon EKS (Kubernetes & Helm)**.
+This document provides a single, consolidated reference of all `.env` files and environment variable values used across the **DevOps Task Tracker** project, including their usage in **Local Development**, **Docker Compose**, and **Minikube (Kubernetes & Helm)**.
 
 ---
 
@@ -22,7 +22,7 @@ This document provides a single, consolidated reference of all `.env` files and 
 | `DATABASE_URL` | `postgresql://postgres:postgres@localhost:5432/devops_tasks` | Backend | Full connection string for migrations/ORM |
 | `CORS_ORIGIN` | `http://localhost:3000,http://localhost:5173` | Backend | Allowed browser origins for cross-origin API calls |
 | `VITE_API_BASE_URL` | `/api` | Frontend | Base path for frontend API requests (proxied by Nginx) |
-| `VITE_APP_TITLE` | `DevOps Task Tracker \| Amazon EKS` | Frontend | Browser tab title displayed in React app |
+| `VITE_APP_TITLE` | `DevOps Task Tracker \| Minikube` | Frontend | Browser tab title displayed in React app |
 
 ---
 
@@ -87,7 +87,7 @@ CORS_ORIGIN=http://localhost:5173
 # Frontend Environment Variables
 # If left empty, API calls will proxy through /api
 VITE_API_BASE_URL=/api
-VITE_APP_TITLE=DevOps Task Tracker | Amazon EKS
+VITE_APP_TITLE=DevOps Task Tracker | Minikube
 ```
 
 ---
@@ -102,7 +102,7 @@ Depending on where you run the application, `DB_HOST` and `CORS_ORIGIN` change:
 | **Docker Compose** | `postgres` (container name) | `production` | `/api` (proxied by Nginx) |
 | **Minikube / Kind (Raw YAML)** | `postgres` (ClusterIP service) | `production` | `/api` (proxied by Nginx) |
 | **Helm Chart Deployment** | `devops-task-tracker-postgres` | `production` | `/api` (proxied by Nginx) |
-| **Amazon EKS Cloud** | AWS RDS endpoint or in-cluster Postgres | `production` | `/api` or Ingress / ALB DNS |
+| **Minikube NodePort / Ingress** | `postgres` (ClusterIP) | `production` | `/api` or NodePort / Ingress IP |
 
 ---
 
@@ -143,4 +143,4 @@ stringData:
 
 1. **Never commit actual `.env` files with production passwords to Git.** They are properly ignored via `.gitignore`.
 2. **Always maintain `.env.example`** with placeholder/safe defaults as documentation for teammates and CI/CD pipelines.
-3. In production Amazon EKS, inject database credentials using **AWS Secrets Manager** with External Secrets Operator (ESO) or native Kubernetes Secrets sealed with SealedSecrets / KMS encryption.
+3. In Kubernetes, inject database credentials using native Kubernetes **Secrets** with `secretKeyRef` to decouple credentials from pod specifications.

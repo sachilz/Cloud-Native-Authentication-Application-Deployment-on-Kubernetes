@@ -1,6 +1,6 @@
 # Project Issues & Troubleshooting Log
 
-This directory documents the technical challenges, root causes, and resolutions encountered during containerization, local development, and deployment for the **Kubernetes Migration & Deployment to Amazon EKS** project.
+This directory documents the technical challenges, root causes, and resolutions encountered during containerization, local development, and deployment for the **Cloud-Native Authentication Application Deployment on Minikube** project.
 
 ---
 

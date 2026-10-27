@@ -1,7 +1,7 @@
 {
   "name": "devops-task-tracker-backend",
   "version": "1.0.0",
-  "description": "Backend API for DevOps Task Tracker in Kubernetes Migration to Amazon EKS",
+  "description": "Backend API for DevOps Task Tracker in Minikube Kubernetes",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -13,7 +13,7 @@
   "keywords": [
     "devops",
     "kubernetes",
-    "eks",
+    "minikube",
     "express",
     "postgres",
     "task-tracker"
